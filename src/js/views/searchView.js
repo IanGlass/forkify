@@ -16,7 +16,7 @@ const limitRecipeTitle = (title, limit = 17) => {
     return title;
 }
 
-// Render a single recipe
+// Render a single recipe, which will be called in a loop to render all recipes
 const renderRecipe = recipe => {
     const markup = `
     <li>

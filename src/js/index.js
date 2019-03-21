@@ -1,8 +1,8 @@
 import Search from './models/Search';
 import * as searchView from './views/searchView';
-import {elements} from './views/base';
+import {elements, renderLoader, clearLoader} from './views/base';
 
-/** Global state of the app 
+/** Global state of the app , stores objects containing promises
  * - Search object
  * - Current recipe object
  * - Shopping list object
@@ -19,11 +19,15 @@ const controlSearch = async () => {
         // Clear the recipe result list and clear the input
         searchView.clearResults();
 
+        // Render loader to show search is happening
+        renderLoader(elements.searchResults);
+
         states.search = new Search(query);
 
         await states.search.getResults();
 
         console.log(states.search.recipes);
+        clearLoader();
         searchView.renderResults(states.search.recipes);
     }
 }

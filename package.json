@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "start": "webpack-dev-server --mode development --open"
+    "start": "webpack-dev-server --mode development --open",
+    "proxy": "cors-http-proxy -t http://food2fork.com -p 8010"
   },
   "repository": {
     "type": "git",
