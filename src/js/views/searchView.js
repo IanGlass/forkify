@@ -33,9 +33,52 @@ const renderRecipe = recipe => {
     elements.searchResultList.insertAdjacentHTML('beforeend', markup);
 }
 
-export const renderResults = (recipes) => {
-    // Increment through recipe list and render each one
-    recipes.forEach(element => renderRecipe(element));
+/** Creates a prev or next button to navigate the recipes list. Uses HTML data attributes to store the current page number.
+ * @param {string} page The current page number being displayed.
+ * @param {string} type The type of button either prev or next.
+ */
+const createButton = (page, type) => `
+                <button class="btn-inline results__btn--${type}" data-goto=${type === 'prev' ? page - 1 : page + 1}>
+                    <span>Page ${type === 'prev' ? page - 1 : page + 1}</span>
+                    <svg class="search__icon">
+                        <use href="img/icons.svg#icon-triangle-${type === 'prev' ? 'left' : 'right'}"></use>
+                    </svg>
+                </button>
+`;
+
+// Renders the buttons to change pages on the recipes list
+const renderButtons = (page, numberOfResults, resultsPerPage) => {
+    // Round the total number of pages up to ensure there are enough to show all results
+    const numberOfPages = Math.ceil(numberOfResults/resultsPerPage);
+    
+    let button;
+    // Determine if we should render the next and/or back a page buttons
+    if (page === 1 && numberOfPages > 1) {
+        button = createButton(page, 'next');
+    } else if (page < numberOfPages) {
+        button = `
+            ${createButton(page, 'prev')}
+            ${createButton(page, 'next')}
+        `
+    } else if (page === numberOfPages && numberOfPages > 1) {
+        button = createButton(page, 'prev')
+    }
+
+    elements.searchResultsPages.insertAdjacentHTML('afterbegin', button);
+}
+
+export const renderResults = (recipes, page = 1, resultsPerPage = 10) => {
+    // Make sure recipes list is cleared before populating
+    clearResults();
+
+    // Used to determine where in the recipes matrix to begin and end displaying i.e. pagination
+    const start = (page - 1) * resultsPerPage;
+    const end = page * resultsPerPage;
+
+    // Increment through recipe list and render each one within pagination constraints
+    recipes.slice(start, end).forEach(element => renderRecipe(element));
+
+    renderButtons(page, recipes.length, resultsPerPage);
 }
 
 export const clearResults = () => {
@@ -44,4 +87,18 @@ export const clearResults = () => {
 
     // Clear all results in recipe list
     elements.searchResultList.innerHTML = '';
-}
+
+    // Clear the buttons
+    elements.searchResultsPages.innerHTML = '';
+};
+
+export const highlightSelected = id => {
+    // Remove any highlighted items first
+    const resultsArray = Array.from(document.querySelectorAll('.results__link'));
+    resultsArray.forEach(element => {
+        element.classList.remove('results__link--active');
+    })
+
+    // Select the element with the id href attribute
+    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+};
