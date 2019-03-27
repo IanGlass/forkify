@@ -2,7 +2,7 @@ import {elements} from './base'
 
 export const getInput = () => elements.searchInput.value;
 
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
     if (title.length > limit) {
         title.split(' ').reduce((acc, curr) => {
@@ -11,7 +11,7 @@ const limitRecipeTitle = (title, limit = 17) => {
             }
             return acc + curr.length;
         }, 0)
-        return `${newTitle.join('')} ...`;
+        return `${newTitle.join(' ')} ...`;
     }
     return title;
 }
@@ -100,5 +100,5 @@ export const highlightSelected = id => {
     })
 
     // Select the element with the id href attribute
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
