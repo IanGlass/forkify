@@ -31,6 +31,8 @@
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "fractional": "^1.0.0",
-    "uniqid": "^5.0.3"
+    "uniqid": "^5.0.3",
+    "webpack": "^4.29.6",
+    "webpack-dev-server": "^3.2.1"
   }
 }
