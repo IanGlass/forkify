@@ -65,7 +65,6 @@ window.addEventListener('load', () => {
 
     // Toggle the likes menu if any likes are present
     likesView.toggleLikeMenu(states.likes.getNumberLikes());
-    console.log(states.likes.likes);
 
     // Render the current likes status
     states.likes.likes.forEach(like => likesView.renderLike(like));
@@ -87,23 +86,23 @@ const controlRecipe = async () => {
 
         states.recipe = new Recipe(id);
 
-        states.recipe.author = "The Pioneer Woman";
-        states.recipe.cookingTime = 90;
-        states.recipe.id = "46956";
-        states.recipe.image = "http://static.food2fork.com/fruitpizza9a19.jpg";
-        states.recipe.ingredients = [
-                {count: "1.33", unit: "cup", ingredient: "shortening"},
-                {count: "1.50", unit: "cup", ingredient: "sugar"},
-                {count: "1.00", unit: "tsp", ingredient: "orange zest"},
-                {count: "1.00", unit: "tsp", ingredient: "vanilla"},
-        ];
-        states.recipe.length = 17;
-        states.recipe.servings = 4;
-        states.recipe.title = "Deep Dish Fruit Pizza";
-        states.recipe.url = "http://thepioneerwoman.com/cooking/2012/01/fruit-pizza/";
+        // states.recipe.author = "The Pioneer Woman";
+        // states.recipe.cookingTime = 90;
+        // states.recipe.id = "46956";
+        // states.recipe.image = "http://static.food2fork.com/fruitpizza9a19.jpg";
+        // states.recipe.ingredients = [
+        //         {count: "1.33", unit: "cup", ingredient: "shortening"},
+        //         {count: "1.50", unit: "cup", ingredient: "sugar"},
+        //         {count: "1.00", unit: "tsp", ingredient: "orange zest"},
+        //         {count: "1.00", unit: "tsp", ingredient: "vanilla"},
+        // ];
+        // states.recipe.length = 17;
+        // states.recipe.servings = 4;
+        // states.recipe.title = "Deep Dish Fruit Pizza";
+        // states.recipe.url = "http://thepioneerwoman.com/cooking/2012/01/fruit-pizza/";
 
         try {
-            // await states.recipe.getRecipe();
+            await states.recipe.getRecipe();
 
             // Render the recipe
             clearLoader(elements.recipe);
@@ -151,6 +150,7 @@ const controlLike = function() {
     }
     const currentID = states.recipe.id;
     // Handle if recipe has been liked yet or not
+    console.log(states);
     if (!states.likes.isLiked(currentID)) {
         const newLike = states.likes.addLike(
             currentID, 
