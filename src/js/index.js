@@ -94,12 +94,14 @@ const controlRecipe = async () => {
 
 // Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button 
 elements.recipe.addEventListener('click', event => {
-    if (event.target.matches('.btn-decrease, .btn-decrease *') && states.recipe.servings > 1) {
-        states.recipe.updateServings('dec');
-        recipeView.updateServings(states.recipe);
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+    if (event.target.matches('.btn-decrease, .btn-decrease *') && states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].servings > 1) {
+        states.search.updateServings(id, 'dec');
+        recipeView.updateServings(states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)]);
     } else if (event.target.matches('.btn-increase, .btn-increase *')) {
-        states.recipe.updateServings('inc');
-        recipeView.updateServings(states.recipe);
+        states.search.updateServings(id, 'inc');
+        recipeView.updateServings(states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)]);
     } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
         controlShoppingList();
     } else if (event.target.matches('.recipe__love, .recipe__love *')) {

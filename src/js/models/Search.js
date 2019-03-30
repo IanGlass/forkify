@@ -8,11 +8,13 @@ export default class Search {
     }
     async getResults() {
         try {
-            const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=30`);
+            const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=1`);
             this.recipes = res.data.hits.map(hit => hit.recipe);
+            console.log(this.recipes);
             this.recipes.forEach((recipe, index) => this.recipes[index].ingredients = this.standardizeIngredients(recipe.ingredientLines));
             this.tidyRecipes();
             this.createIDs();
+            this.storeServings();
             console.log(this.recipes);
         } catch (error) {
             alert(error);
@@ -22,6 +24,10 @@ export default class Search {
     // Remove any failed recipes from the list
     tidyRecipes() {
         this.recipes = this.recipes.filter(recipe => recipe.ingredients.length > 0);
+    }
+
+    storeServings() {
+        this.recipes.forEach((recipe, index) => this.recipes[index].servings = this.recipes[index].yield);
     }
 
     calculateServings() {
@@ -44,7 +50,8 @@ export default class Search {
                 let ingredient = element.toLowerCase();
                 unitsLong.forEach((unit, index) => {
                     ingredient = ingredient.replace(unit, unitsShort[index]);
-                })
+                });
+                console.log(ingredient);
                 
                 // Remove parenthesis
                 ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
@@ -65,7 +72,6 @@ export default class Search {
                         if (ind > - 1) {
                             ingredient = ingredient.replace(ingredient.substring(commaIndex, ingredient.length), '');
                         }
-                        // if (unit === arrayIngredients[index]) arrayIngredients.pop()
                     }
                 });
 
@@ -80,14 +86,21 @@ export default class Search {
 
                 let objectIngredient;
                 // This block deals with all the cases of recipe formats
+                console.log(unitIndex);
                 if (unitIndex > -1) {
                     // Grab all the ingredient counts i.e. 1 or 2 1/2
                     let count = '';
                     const arrayCount = arrayIngredients.slice(0, unitIndex);
+                    console.log(arrayCount);
                     if (arrayCount.length === 1 ) {
                             count = eval(arrayIngredients[0].replace('-', '+')).toFixed(2);
                     } else {
                         count = eval(arrayIngredients.slice(0, unitIndex).join('+')).toFixed(2);
+                        console.log(count);
+                    }
+                    // Something went wrong in count conversion
+                    if (count == 0) {
+                        count = arrayIngredients[0];
                     }
                     objectIngredient = {
                         count,
@@ -96,6 +109,7 @@ export default class Search {
                     }
 
                 } else if (parseFloat(arrayIngredients[0], 10)) {
+                    console.log(parseFloat(arrayIngredients[0], 10));
                     // There is no unit but first element is a number
                     objectIngredient = {
                         count: parseFloat(arrayIngredients[0], 10),
@@ -115,6 +129,8 @@ export default class Search {
                 // Remove any starting white space
                 if (objectIngredient.ingredient[0] === ' ') objectIngredient.ingredient = objectIngredient.ingredient.substring(1, ingredient.length);
 
+                console.log(objectIngredient);
+
                 return objectIngredient;
             });
             return ingredients;
@@ -123,14 +139,16 @@ export default class Search {
         }
     };
 
-    // Increase or decrease the ingredients count based on the number of servings
-    updateServings (type) {
-        const newServings = type === 'dec' ? this.servings - 1: this.servings + 1;
+    // Increase or decrease the ingredients count based on the number of servings for a given recipe
+    updateServings (id, type) {
+        const index = this.recipes.findIndex(recipe => recipe.id === id);
 
-        this.ingredients.forEach(ingredient => {
-            ingredient.count = ingredient.count * (newServings / this.servings);
+        const newServings = type === 'dec' ? this.recipes[index].servings - 1: this.recipes[index].servings + 1;
+
+        this.recipes[index].ingredients.forEach(ingredient => {
+            ingredient.count = ingredient.count * (newServings / this.recipes[index].servings);
         })
 
-        this.servings = newServings;
+        this.recipes[index].servings = newServings;
     };
 }
