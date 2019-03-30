@@ -1,7 +1,9 @@
 import {elements} from './base'
 
-export const renderItem = item => {
-    const markUp = `
+export const refreshList = items => {
+    elements.shopping.innerHTML = '';
+    items.forEach(item => {
+        const markUp = `
         <li class="shopping__item" data-itemid=${item.id}>
             <div class="shopping__count">
                 <input type="number" value="${item.count}" step="${item.count}" class="shopping__count-value">
@@ -16,6 +18,7 @@ export const renderItem = item => {
         </li>
     `;
     elements.shopping.insertAdjacentHTML('beforeend', markUp);
+    });   
 }
 
 export const deleteItem = id => {

@@ -1,4 +1,5 @@
 import uniqid from 'uniqid'
+import stringSimilarity from 'string-similarity'
 
 export default class shoppingList {
     constructor() {
@@ -6,14 +7,19 @@ export default class shoppingList {
     }
 
     addItem(ingredient) {
-        const item = {
-            id: uniqid(),
-            count: ingredient.count,
-            unit: ingredient.unit,
-            ingredient: ingredient.ingredient
-        };
-        this.items.push(item);
-        return item;
+        // First check if we have a similar item already in the list and collate if units are also the same. Only want to find first match
+        const index = this.items.findIndex(element => stringSimilarity.compareTwoStrings(element.ingredient, ingredient.ingredient) > 0.9);
+        if (index > - 1 && (ingredient.unit === this.items[index].unit)) {
+            this.items[index].count = (parseFloat(this.items[index].count) + parseFloat(ingredient.count));
+        } else {
+            const item = {
+                id: uniqid(),
+                count: ingredient.count,
+                unit: ingredient.unit,
+                ingredient: ingredient.ingredient
+            };
+            this.items.push(item);
+        }
     }
 
     deleteItem(id) {

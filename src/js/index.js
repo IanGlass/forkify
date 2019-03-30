@@ -7,6 +7,7 @@ import * as listView from './views/listView';
 import * as likesView from './views/likesView';
 
 import {elements, renderLoader, clearLoader} from './views/base';
+import { Decipher } from 'crypto';
 
 /** Global state of the app , stores objects containing promises
  * - Search object
@@ -96,12 +97,14 @@ const controlRecipe = async () => {
 elements.recipe.addEventListener('click', event => {
     // Grab the recipe id from the URL
     const id = window.location.hash.replace('#', '');
-    if (event.target.matches('.btn-decrease, .btn-decrease *') && states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].servings > 1) {
+    const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
+    
+    if (event.target.matches('.btn-decrease, .btn-decrease *') && currentRecipe.servings > 1) {
         states.search.updateServings(id, 'dec');
-        recipeView.updateServings(states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)]);
+        recipeView.updateServings(currentRecipe);
     } else if (event.target.matches('.btn-increase, .btn-increase *')) {
         states.search.updateServings(id, 'inc');
-        recipeView.updateServings(states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)]);
+        recipeView.updateServings(currentRecipe);
     } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
         controlShoppingList();
     } else if (event.target.matches('.recipe__love, .recipe__love *')) {
@@ -115,33 +118,43 @@ const controlShoppingList = function() {
         states.list = new List();
     }
 
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+
     // Add all the items from the current recipe to the shopping list
-    states.recipe.ingredients.forEach(ingredient => {
-        const item = states.list.addItem(ingredient);
-        listView.renderItem(item);
+    states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].ingredients.forEach(ingredient => {
+        states.list.addItem(ingredient);
+        // listView.renderItem(item);
     });
+    listView.refreshList(states.list.items);
 }
 
 const controlLike = function() {
     if (!states.likes) {
         states.likes = new Likes();
     }
-    const currentID = states.recipe.id;
+
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+    const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
+
     // Handle if recipe has been liked yet or not
-    if (!states.likes.isLiked(currentID)) {
+    if (!states.likes.isLiked(id)) {
         const newLike = states.likes.addLike(
-            currentID, 
-            states.recipe.title, 
-            states.recipe.author, 
-            states.recipe.image
+            id,
+            currentRecipe.label, 
+            currentRecipe.image,
+            currentRecipe.dietLabels,
+            currentRecipe.healthLabels,
+            currentRecipe.cautions
         );
         likesView.toggleLikeButton(true);
 
         likesView.renderLike(newLike);
     } else {
-        states.likes.deleteLike(currentID);
+        states.likes.deleteLike(id);
         likesView.toggleLikeButton(false);
-        likesView.deleteLike(currentID);
+        likesView.deleteLike(id);
     }
 
     // Toggle if the likes menu should be shown yet
