@@ -2,7 +2,7 @@ import {elements} from './base'
 
 export const getInput = () => elements.searchInput.value;
 
-export const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 25) => {
     const newTitle = [];
     if (title.length > limit) {
         title.split(' ').reduce((acc, curr) => {
@@ -20,13 +20,15 @@ export const limitRecipeTitle = (title, limit = 17) => {
 const renderRecipe = recipe => {
     const markup = `
     <li>
-        <a class="results__link results__link" href="#${recipe.recipe_id}">
+        <a class="results__link results__link" href="#${recipe.id}">
             <figure class="results__fig">
-                <img src=${recipe.image_url} alt="${recipe.title}">
+                <img src=${recipe.image} alt="${recipe.label}">
             </figure>
             <div class="results__data">
-                <h4 class="results__name">${limitRecipeTitle(recipe.title)}</h4>
-                <p class="results__author">${recipe.publisher}</p>
+                <h4 class="results__name">${limitRecipeTitle(recipe.label)}</h4>
+                <p class="results__labels"><b>diet</b>:${recipe.dietLabels.toString()}</p>
+                <p class="results__labels"><b>health</b>:${recipe.healthLabels.toString()}</p>
+                <p class="results__labels"><b>caution</b>:${recipe.cautions.toString()}</p>
             </div>
         </a>
     </li>`;
