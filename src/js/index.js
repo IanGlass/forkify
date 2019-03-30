@@ -128,7 +128,6 @@ const controlLike = function() {
     }
     const currentID = states.recipe.id;
     // Handle if recipe has been liked yet or not
-    console.log(states);
     if (!states.likes.isLiked(currentID)) {
         const newLike = states.likes.addLike(
             currentID, 

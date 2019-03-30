@@ -43,7 +43,6 @@ const createIngredient = ingredient => `
 `;
 
 export const renderRecipe = (recipe, isLiked) => {
-    console.log(recipe);
     const markUp = `
     <figure class="recipe__fig">
         <img src="${recipe.image}" alt="${recipe.label}" class="recipe__img">

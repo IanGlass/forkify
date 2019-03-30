@@ -10,12 +10,10 @@ export default class Search {
         try {
             const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=1`);
             this.recipes = res.data.hits.map(hit => hit.recipe);
-            console.log(this.recipes);
             this.recipes.forEach((recipe, index) => this.recipes[index].ingredients = this.standardizeIngredients(recipe.ingredientLines));
             this.tidyRecipes();
             this.createIDs();
             this.storeServings();
-            console.log(this.recipes);
         } catch (error) {
             alert(error);
         }
@@ -51,7 +49,6 @@ export default class Search {
                 unitsLong.forEach((unit, index) => {
                     ingredient = ingredient.replace(unit, unitsShort[index]);
                 });
-                console.log(ingredient);
                 
                 // Remove parenthesis
                 ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
@@ -86,17 +83,14 @@ export default class Search {
 
                 let objectIngredient;
                 // This block deals with all the cases of recipe formats
-                console.log(unitIndex);
                 if (unitIndex > -1) {
                     // Grab all the ingredient counts i.e. 1 or 2 1/2
                     let count = '';
                     const arrayCount = arrayIngredients.slice(0, unitIndex);
-                    console.log(arrayCount);
                     if (arrayCount.length === 1 ) {
                             count = eval(arrayIngredients[0].replace('-', '+')).toFixed(2);
                     } else {
                         count = eval(arrayIngredients.slice(0, unitIndex).join('+')).toFixed(2);
-                        console.log(count);
                     }
                     // Something went wrong in count conversion
                     if (count == 0) {
@@ -109,7 +103,6 @@ export default class Search {
                     }
 
                 } else if (parseFloat(arrayIngredients[0], 10)) {
-                    console.log(parseFloat(arrayIngredients[0], 10));
                     // There is no unit but first element is a number
                     objectIngredient = {
                         count: parseFloat(arrayIngredients[0], 10),
@@ -128,8 +121,6 @@ export default class Search {
                 objectIngredient.ingredient = objectIngredient.ingredient.replace('-', '').replace('-', '');
                 // Remove any starting white space
                 if (objectIngredient.ingredient[0] === ' ') objectIngredient.ingredient = objectIngredient.ingredient.substring(1, ingredient.length);
-
-                console.log(objectIngredient);
 
                 return objectIngredient;
             });
