@@ -7,7 +7,8 @@ import * as listView from './views/listView';
 import * as likesView from './views/likesView';
 
 import {elements, renderLoader, clearLoader} from './views/base';
-import { Decipher } from 'crypto';
+import { Decipher, createPublicKey } from 'crypto';
+import { boolean } from '@oclif/parser/lib/flags';
 
 /** Global state of the app , stores objects containing promises
  * - Search object
@@ -34,7 +35,15 @@ const controlSearch = async () => {
         // Render loader to show search is happening
         renderLoader(elements.searchResults);
 
-        states.search = new Search(query);
+        // Get the diet filter
+        let diet;
+        for (let index = 0; index < elements.dietPanel.children.length; index++) {
+            if (JSON.parse(elements.dietPanel.children[index].dataset.active)) {
+                diet = elements.dietPanel.children[index].id;
+            }
+        }
+        
+        states.search = new Search(query, diet);
 
         await states.search.getResults();
 
@@ -42,6 +51,20 @@ const controlSearch = async () => {
         searchView.renderResults(states.search.recipes);
     }
 }
+
+elements.dietPanel.addEventListener('click', event => {
+    // Turn all buttons off first, forEach not working ???
+    for (let index = 0; index < event.target.parentElement.children.length; index++) {
+        event.target.parentElement.children[index].dataset.active = false;
+        event.target.parentElement.children[index].style.backgroundImage = "linear-gradient(to right bottom, white, black)";
+    }
+    // Activate the selected button
+    event.target.dataset.active = true;
+    event.target.style.backgroundImage = "linear-gradient(to right bottom, #FBDB89, #F48982)";
+
+    // Change diet-btn text to selected filter
+    document.querySelector('.diet-btn').textContent = event.target.textContent === 'None' ? 'Diet Filter' : event.target.textContent;
+});
 
 /** Initiates a search when enter is pressed.
  */
@@ -176,4 +199,5 @@ elements.shopping.addEventListener('click', event => {
         const value = parseFloat(event.target.value, 10);
         states.list.updateCount(id, value);
     }
-})
+});
+

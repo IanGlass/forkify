@@ -67,6 +67,41 @@ body {
     width: 2.25rem;
     fill: currentColor; }
 
+.diet-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.diet-btn {
+  min-width: 150px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 15px;
+  border: none;
+}
+
+.diet-dropdown-panel {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.diet-dropdown-panel button {
+  border-radius: 10rem;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  background-image: linear-gradient(to right bottom, white, black);
+}
+
+.diet-dropdown:hover .diet-dropdown-panel {display: block;}
+.diet-dropdown-panel button:hover {background-color: #ddd;}
+
 .btn-small, .btn-small:link, .btn-small:visited {
   font-size: 1.3rem;
   padding: 1rem 1.75rem;
@@ -121,6 +156,13 @@ body {
     transform: translateY(0); }
   .btn-tiny:not(:last-child) {
     margin-right: .3rem; }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
 
 .heading-2 {
   font-size: 1.8rem;
