@@ -14,7 +14,7 @@ export default class Likes {
         };
         this.likes.push(like);
 
-        this.persistData();
+        // this.persistData();
 
         return like;
     }
