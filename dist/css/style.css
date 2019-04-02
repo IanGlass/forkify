@@ -73,12 +73,9 @@ body {
 }
 
 .diet-btn {
-  min-width: 150px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px;
-  font-size: 15px;
-  border: none;
+  min-width: 130px;
+  padding: 1.3rem 3rem;
+  font-size: 1.4rem;
 }
 
 .diet-dropdown-panel {
@@ -108,12 +105,9 @@ body {
 }
 
 .health-btn {
-  min-width: 150px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px;
-  font-size: 15px;
-  border: none;
+  min-width: 140px;
+  padding: 1.3rem 3rem;
+  font-size: 1.4rem;
 }
 
 .health-dropdown-panel {
