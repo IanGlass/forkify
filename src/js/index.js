@@ -42,8 +42,16 @@ const controlSearch = async () => {
                 diet = elements.dietPanel.children[index].id;
             }
         }
+
+        // Get the health filter
+        let health;
+        for (let index = 0; index < elements.healthPanel.children.length; index++) {
+            if (JSON.parse(elements.healthPanel.children[index].dataset.active)) {
+                health = elements.healthPanel.children[index].id;
+            }
+        }
         
-        states.search = new Search(query, diet);
+        states.search = new Search(query, diet, health);
 
         await states.search.getResults();
 
@@ -52,6 +60,7 @@ const controlSearch = async () => {
     }
 }
 
+// Deals with diet filter dropdown buttons
 elements.dietPanel.addEventListener('click', event => {
     // Turn all buttons off first, forEach not working ???
     for (let index = 0; index < event.target.parentElement.children.length; index++) {
@@ -64,6 +73,21 @@ elements.dietPanel.addEventListener('click', event => {
 
     // Change diet-btn text to selected filter
     document.querySelector('.diet-btn').textContent = event.target.textContent === 'None' ? 'Diet Filter' : event.target.textContent;
+});
+
+// Deals with health filter dropdown buttons
+elements.healthPanel.addEventListener('click', event => {
+    // Turn all buttons off first, forEach not working ???
+    for (let index = 0; index < event.target.parentElement.children.length; index++) {
+        event.target.parentElement.children[index].dataset.active = false;
+        event.target.parentElement.children[index].style.backgroundImage = "linear-gradient(to right bottom, white, black)";
+    }
+    // Activate the selected button
+    event.target.dataset.active = true;
+    event.target.style.backgroundImage = "linear-gradient(to right bottom, #FBDB89, #F48982)";
+
+    // Change health-btn text to selected filter
+    document.querySelector('.health-btn').textContent = event.target.textContent === 'None' ? 'Health Filter' : event.target.textContent;
 });
 
 /** Initiates a search when enter is pressed.
