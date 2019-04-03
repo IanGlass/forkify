@@ -10,7 +10,6 @@ export default class Search {
     }
     async getResults() {
         try {
-            console.log(`q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=50${this.diet === 'none' ? '': '&diet=' + this.diet}${this.health === 'none' ? '': '&health=' + this.health}`);
             const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=50${this.diet === 'none' ? '': '&diet=' + this.diet}${this.health === 'none' ? '': '&health=' + this.health}`);
             this.recipes = res.data.hits.map(hit => hit.recipe);
             this.recipes.forEach((recipe, index) => this.recipes[index].ingredients = this.standardizeIngredients(recipe.ingredientLines));
@@ -42,7 +41,7 @@ export default class Search {
 
     standardizeIngredients(ingredients) {
         const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'ozs', 'teaspoon', 'teaspoons', 'cups', 'pounds', 'grams', 'gram'];
-        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound', 'g', 'g'];
+        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound', 'g', 'g', 'ml'];
         const units = [...unitsShort, 'kg','g'];
 
         try {
@@ -53,7 +52,7 @@ export default class Search {
                     ingredient = ingredient.replace(unit, unitsShort[index]);
                 });
                 
-                // Remove parenthesis
+                // Remove parenthesis and contents
                 ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
 
                 // Deal with bad unicode fractions
@@ -62,8 +61,8 @@ export default class Search {
                 ingredient = ingredient.replace(String.fromCharCode(190), ' 3/4');
                 ingredient = ingredient.replace(String.fromCharCode(8532), ' 2/3');
 
-                // First remove any trailing units which are suggestive at the end of recipes which breaks things i.e. 1 chicken, about 2-8 pounds
-                unitsShort.forEach( (unit, index) => {
+                // First remove any trailing units which are suggestive at the end of recipes which breaks things i.e. 1 chicken, about 2-8 pounds AND separate unit from count if they aren't spaced properly
+                unitsShort.forEach((unit) => {
                     const commaIndex = ingredient.indexOf(',');
                     // If there is a comma then there may be more information with extra units
                     if (commaIndex > - 1){
@@ -71,6 +70,15 @@ export default class Search {
                         // If the extra unit has been found, then remove everything after the comma for cleaness
                         if (ind > - 1) {
                             ingredient = ingredient.replace(ingredient.substring(commaIndex, ingredient.length), '');
+                        }
+                    }
+
+                    const unitIndex = ingredient.indexOf(unit);
+                    // If unit found
+                    if (unitIndex > 0) {
+                        // If there isn't a space before the unit AND there is a space after (for checking 'g'), add one
+                        if (ingredient[unitIndex - 1] !== ' ' && (ingredient[unitIndex + 1] === ' ' || ingredient[unitIndex + 2] === ' ')) {
+                            ingredient = ingredient.slice(0, unitIndex) + ' ' + ingredient.slice(unitIndex);
                         }
                     }
                 });
