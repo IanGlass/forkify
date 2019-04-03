@@ -39,6 +39,7 @@
     "fractional": "^1.0.0",
     "heroku": "^7.21.0",
     "html-webpack-plugin": "^3.2.0",
+    "jspdf": "^1.5.3",
     "string-similarity": "^3.0.0",
     "uniqid": "^5.0.3",
     "webpack": "^4.29.6",

@@ -5,6 +5,7 @@ import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
 import * as likesView from './views/likesView';
+import jsPDF from 'jspdf'
 
 import {elements, renderLoader, clearLoader} from './views/base';
 import { Decipher, createPublicKey } from 'crypto';
@@ -225,3 +226,10 @@ elements.shopping.addEventListener('click', event => {
     }
 });
 
+document.querySelector('.print-btn').addEventListener('click', event => {
+    var printContents = document.querySelector('.shopping').innerHTML;
+    var originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+})

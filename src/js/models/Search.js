@@ -40,8 +40,8 @@ export default class Search {
     }
 
     standardizeIngredients(ingredients) {
-        const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'ozs', 'teaspoon', 'teaspoons', 'cups', 'pounds', 'grams', 'gram'];
-        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound', 'g', 'g', 'ml'];
+        const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'ozs', 'teaspoon', 'teaspoons', 'cups', 'pounds', 'pound', 'grams', 'gram', 'tsps'];
+        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'lbs', 'lbs', 'lbs', 'g', 'g', 'ml', 'tsp'];
         const units = [...unitsShort, 'kg','g'];
 
         try {
