@@ -16,6 +16,7 @@ export default class Search {
             this.tidyRecipes();
             this.createIDs();
             this.storeServings();
+            console.log(this.recipes);
         } catch (error) {
             alert(error);
         }
@@ -77,7 +78,7 @@ export default class Search {
                     // If unit found
                     if (unitIndex > 0) {
                         // If there isn't a space before the unit AND there is a space after (for checking 'g'), add one
-                        if (ingredient[unitIndex - 1] !== ' ' && (ingredient[unitIndex + 1] === ' ' || ingredient[unitIndex + 2] === ' ')) {
+                        if (ingredient[unitIndex - 1] !== ' ' && ingredient[unitIndex + 1] === ' ') {
                             ingredient = ingredient.slice(0, unitIndex) + ' ' + ingredient.slice(unitIndex);
                         }
                     }

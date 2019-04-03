@@ -138,7 +138,7 @@ const controlRecipe = async () => {
 };
 
 // Load a recipe when a recipe is chosen or the page is reloaded i.e. user saved page as bookmark
-['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+['hashchange'].forEach(event => window.addEventListener(event, controlRecipe));
 
 // Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button 
 elements.recipe.addEventListener('click', event => {
