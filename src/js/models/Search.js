@@ -16,7 +16,6 @@ export default class Search {
             this.tidyRecipes();
             this.createIDs();
             this.storeServings();
-            console.log(this.recipes);
         } catch (error) {
             alert(error);
         }
