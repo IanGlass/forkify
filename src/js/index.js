@@ -8,12 +8,9 @@ import * as likesView from './views/likesView';
 import PHE from 'print-html-element';
 
 import {elements, renderLoader, clearLoader} from './views/base';
-import { Decipher, createPublicKey } from 'crypto';
-import { boolean } from '@oclif/parser/lib/flags';
 
 /** Global state of the app , stores objects containing promises
- * - Search object
- * - Current recipe object
+ * - Search object containing all recipes
  * - Shopping list object
  * - Liked recipes 
 */
@@ -128,7 +125,7 @@ const controlRecipe = async () => {
 
     if (id) {
         // Clear the recipe panel
-        recipeView.clearRecipe();
+        recipeView.clearRecipes();
 
         // Highlight the selected search item if there is one
         if (states.search) searchView.highlightSelected(id);

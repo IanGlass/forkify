@@ -1,13 +1,19 @@
 import axios from 'axios';
 import {id, key, proxy} from '../config';
-import { runInThisContext } from 'vm';
 
+/**
+ * The search object is used to create an initiate an AJAX call to fetch recipes and store the digested recipes in an array.
+ */
 export default class Search {
     constructor(query, diet, health) {
         this.query = query;
         this.diet = diet;
         this.health = health
     }
+
+    /**
+     * Asynchronous call to the edamam API to fetch a list of recipes based on the search query, health label and diet label.
+     */
     async getResults() {
         try {
             const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&app_id=${id}&app_key=${key}&from=0&to=50${this.diet === 'none' ? '': '&diet=' + this.diet}${this.health === 'none' ? '': '&health=' + this.health}`);
@@ -21,24 +27,31 @@ export default class Search {
         }
     };
 
-    // Remove any failed recipes from the list
+    /**
+     * Removes any recipes which have an ingredient length of zero, indicating the recipe was not digested properly.
+     */
     tidyRecipes() {
         this.recipes = this.recipes.filter(recipe => recipe.ingredients.length > 0);
     }
 
+    /**
+     * Stores the yield property into a servings property for tidiness.
+     */
     storeServings() {
         this.recipes.forEach((recipe, index) => this.recipes[index].servings = this.recipes[index].yield);
     }
 
-    calculateServings() {
-        this.servings = 4;
-    };
-
-    // Creates IDs from the URIs
+    /**
+     * Creates unique IDs from the provided URIs
+     */
     createIDs() {
         this.recipes.forEach((recipe, index) => this.recipes[index].id = recipe.uri.substring(recipe.uri.indexOf('_') + 1, recipe.uri.length));
     }
 
+    /**
+     * Formats the ingredients list for each recipe into a form compatible with this program. Failed conversions return an empty ingredient list which is later used to completely remove the recipe from the recipes list.
+     * @param {array} ingredients Array containing the ingredients list for a particular recipe.
+     */
     standardizeIngredients(ingredients) {
         const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'ozs', 'teaspoon', 'teaspoons', 'cups', 'pounds', 'pound', 'grams', 'gram', 'tsps'];
         const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'lbs', 'lbs', 'lbs', 'g', 'g', 'ml', 'tsp'];
@@ -142,6 +155,11 @@ export default class Search {
     };
 
     // Increase or decrease the ingredients count based on the number of servings for a given recipe
+    /**
+     * Updates the number of servings and the count of each ingredient for a recipe.
+     * @param {string} id ID of the recipe to update
+     * @param {string} type One of 'dec' or 'inc' indicating if the number of servings should increment or decrement by one.
+     */
     updateServings (id, type) {
         const index = this.recipes.findIndex(recipe => recipe.id === id);
 

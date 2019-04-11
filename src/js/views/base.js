@@ -16,6 +16,10 @@ export const elementStrings = {
     loader: 'loader'
 };
 
+/**
+ * Renders a loader in the recipes panel when an AJAX call is made.
+ * @param {Element} parent The recipes panel representing the parent element of where the loader will be rendered.
+ */
 export const renderLoader = parent => {
     const loader = `
         <div class="${elementStrings.loader}"><
@@ -27,6 +31,9 @@ export const renderLoader = parent => {
     parent.insertAdjacentHTML('afterbegin', loader);
 };
 
+/**
+ * Removes the loader from the recipes panel after the AJAX call has finished and we have recipes to render.
+ */
 export const clearLoader = () => {
     const loader = document.querySelector(`.${elementStrings.loader}`);
     if (loader) loader.parentElement.removeChild(loader);

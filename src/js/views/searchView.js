@@ -1,7 +1,15 @@
 import {elements} from './base'
 
+/**
+ * Returns the user input of the search panel.
+ */
 export const getInput = () => elements.searchInput.value;
 
+/**
+ * Reduces the size of a recipe title so it fits in the 
+ * @param {*} title 
+ * @param {*} limit 
+ */
 export const limitRecipeTitle = (title, limit = 25) => {
     const newTitle = [];
     if (title.length > limit) {

@@ -1,11 +1,14 @@
 import {elements} from './base'
 import {Fraction} from 'fractional'
 
-export const clearRecipe = () => {
+/**
+ * Removes all the recipes from the recipe search panel.
+ */
+export const clearRecipes = () => {
     elements.recipe.innerHTML = '';
 };
 
-/** Fromats the number of an ingredient into a human readable fraction. Gets called for every recipe in createIngredient().
+/** Formats the count of an ingredient into a human readable fraction. Gets called for every recipe in createIngredient().
  * @param {integer} count The value to be formated into a human readable fraction.
  * @return {string} The human readable fraction.
  */
@@ -27,8 +30,10 @@ const formatCount = count => {
     return '?';
 };
 
-/** Adds an incredient into the recipe
- */
+ /**
+  * Returns the markUp for a single ingredient for a recipe. Called from renderRecipe().
+  * @param {object} ingredient The ingredient object to be rendered.
+  */
 const createIngredient = ingredient => `
     <li class="recipe__item">
         <svg class="recipe__icon">
@@ -42,6 +47,11 @@ const createIngredient = ingredient => `
     </li>
 `;
 
+/**
+ * Renders a single recipe into the recipe view.
+ * @param {object} recipe The recipe object to render.
+ * @param {boolean} isLiked Determines if the like button should be active or not. If the like already exists in the likes array.
+ */
 export const renderRecipe = (recipe, isLiked) => {
     const markUp = `
     <figure class="recipe__fig">
@@ -119,6 +129,10 @@ export const renderRecipe = (recipe, isLiked) => {
     elements.recipe.insertAdjacentHTML('afterbegin', markUp);
 }
 
+/**
+ * Updates the number of servings in the currently displayed recipe.
+ * @param {object} recipe Recipe object containing the number of servings and ingredients array.
+ */
 export const updateServings = recipe => {
     // Update servings
     document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
