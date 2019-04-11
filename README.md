@@ -23,7 +23,7 @@ https://all-the-food.herokuapp.com/
 ### Search and Recipes
 
 <p align="center">
-<img src="https://github.com/IanGlass/all-the-food/blob/master/recipes_panel.png" width="200">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/recipes_panel.png" width="300">
 </p>
 
 #### Search Controller
@@ -449,7 +449,7 @@ export const highlightSelected = id => {
 The recipes panel shares information in the search model, which has the list of digested recipes stored.
 
 <p align="center">
-<img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="600">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="500">
 </p>
 
 #### Recipe Controller
@@ -639,7 +639,7 @@ export const updateServings = recipe => {
 ### Shopping List
 
 <p align="center">
-<img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="200">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="300">
 </p>
 
 
