@@ -112,7 +112,3 @@ export const highlightSelected = id => {
     // Select the element with the id href attribute
     document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
-
-export const getQueries = () => {
-    
-}
