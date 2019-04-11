@@ -15,7 +15,6 @@ import {elements, renderLoader, clearLoader} from './views/base';
  * - Liked recipes 
 */
 const states = {};
-window.states = states;
 
 /** 
  * Controls the search recipe function and displays the list of recipes found.
@@ -56,6 +55,14 @@ const controlSearch = async () => {
     }
 }
 
+/** 
+ * Initiates a search when enter is pressed.
+ */
+elements.searchForum.addEventListener('submit', event => {
+    event.preventDefault();
+    controlSearch();
+});
+
 /**
  * Deals with diet filter dropdown buttons
  */
@@ -88,14 +95,6 @@ elements.healthPanel.addEventListener('click', event => {
 
     // Change health-btn text to selected filter
     document.querySelector('.health-btn').textContent = event.target.textContent === 'None' ? 'Health Filter' : event.target.textContent;
-});
-
-/** 
- * Initiates a search when enter is pressed.
- */
-elements.searchForum.addEventListener('submit', event => {
-    event.preventDefault();
-    controlSearch();
 });
 
 /** 
