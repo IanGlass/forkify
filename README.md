@@ -22,6 +22,10 @@ https://all-the-food.herokuapp.com/
 
 ### Search and Recipes
 
+<p align="center">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/recipes_panel.png" width="900">
+</p>
+
 #### Search Controller
 The search controller is essentially the entry point for app functionality. An event listener is attached to the search button and return key, to call the `controlSearch` function. This renders a rotating loader while `controlSearch` fetches the search query, health and diet parameters and makes an AJAX call to fetch the recipes. When this promise returns, the loader is removed and the recipes panel is populated using the `searchView`.
 ```javascript
@@ -442,7 +446,11 @@ export const highlightSelected = id => {
 
 
 ### Recipe
-The recipes panel shares information in the search model, which has the list of digested recipes stored. 
+The recipes panel shares information in the search model, which has the list of digested recipes stored.
+
+<p align="center">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="900">
+</p>
 
 #### Recipe Controller
 `controlRecipe` gets called on a URL hash change, which contains the id of the recipe to view when a recipe from the recipes panel is clicked. At this point the recipe view gets cleared and the recipe gets rendered.
@@ -628,9 +636,11 @@ export const updateServings = recipe => {
 ```
 
 
-### List
+### Shopping List
 
-
+<p align="center">
+<img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="900">
+</p>
 
 
 
