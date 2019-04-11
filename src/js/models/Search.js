@@ -154,7 +154,6 @@ export default class Search {
         }
     };
 
-    // Increase or decrease the ingredients count based on the number of servings for a given recipe
     /**
      * Updates the number of servings and the count of each ingredient for a recipe.
      * @param {string} id ID of the recipe to update
