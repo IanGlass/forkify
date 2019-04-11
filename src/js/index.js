@@ -17,10 +17,8 @@ import {elements, renderLoader, clearLoader} from './views/base';
 const states = {};
 window.states = states;
 
-// window.test = new Recipes('chicken');
-// window.test.getResults();
-
-/** Controls the search recipe function and displays the list of recipes found.
+/** 
+ * Controls the search recipe function and displays the list of recipes found.
  */
 const controlSearch = async () => {
     const query = searchView.getInput();
@@ -58,7 +56,9 @@ const controlSearch = async () => {
     }
 }
 
-// Deals with diet filter dropdown buttons
+/**
+ * Deals with diet filter dropdown buttons
+ */
 elements.dietPanel.addEventListener('click', event => {
     // Turn all buttons off first, forEach not working ???
     for (let index = 0; index < event.target.parentElement.children.length; index++) {
@@ -73,7 +73,9 @@ elements.dietPanel.addEventListener('click', event => {
     document.querySelector('.diet-btn').textContent = event.target.textContent === 'None' ? 'Diet Filter' : event.target.textContent;
 });
 
-// Deals with health filter dropdown buttons
+/**
+ * Deals with health filter dropdown buttons
+ */
 elements.healthPanel.addEventListener('click', event => {
     // Turn all buttons off first, forEach not working ???
     for (let index = 0; index < event.target.parentElement.children.length; index++) {
@@ -88,14 +90,16 @@ elements.healthPanel.addEventListener('click', event => {
     document.querySelector('.health-btn').textContent = event.target.textContent === 'None' ? 'Health Filter' : event.target.textContent;
 });
 
-/** Initiates a search when enter is pressed.
+/** 
+ * Initiates a search when enter is pressed.
  */
 elements.searchForum.addEventListener('submit', event => {
     event.preventDefault();
     controlSearch();
 });
 
-/** Adds an on-click event listener to switch pages when a button is pressed to paginate up to 10 recipes at a time.
+/** 
+ * Adds an on-click event listener to switch pages when a button is pressed to paginate up to 10 recipes at a time.
  */
 elements.searchResults.addEventListener('click', event => {
     // Get the button class
@@ -105,12 +109,11 @@ elements.searchResults.addEventListener('click', event => {
     }
 });
 
-// Restore status of likes on page load
+/**
+ * Restore status of likes on page load
+ */
 window.addEventListener('load', () => {
     states.likes = new Likes();
-
-    // Restore the likes states
-    // states.likes.readStorage();
 
     // Toggle the likes menu if any likes are present
     likesView.toggleLikeMenu(states.likes.getNumberLikes());
@@ -119,7 +122,10 @@ window.addEventListener('load', () => {
     states.likes.likes.forEach(like => likesView.renderLike(like));
 });
 
-const controlRecipe = async () => {
+/**
+ * Loads the recipe selected from the recipes panel into the main recipe view
+ */
+const controlRecipe = () => {
     // Grab the recipe id from the URL
     const id = window.location.hash.replace('#', '');
 
@@ -135,10 +141,12 @@ const controlRecipe = async () => {
     }
 };
 
-// Load a recipe when a recipe is chosen or the page is reloaded i.e. user saved page as bookmark
+// Load a recipe when a recipe is chosen
 ['hashchange'].forEach(event => window.addEventListener(event, controlRecipe));
 
-// Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button 
+/**
+ * Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button
+ */
 elements.recipe.addEventListener('click', event => {
     // Grab the recipe id from the URL
     const id = window.location.hash.replace('#', '');
@@ -157,6 +165,9 @@ elements.recipe.addEventListener('click', event => {
     }
 })
 
+/**
+ * Adds the currently selected recipe igredient list to the global states.list object and displays it in the shopping list
+ */
 const controlShoppingList = function() {
     // Only create a new list if it doesn't exist or lose all previous information
     if (!states.list) {
@@ -169,11 +180,13 @@ const controlShoppingList = function() {
     // Add all the items from the current recipe to the shopping list
     states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].ingredients.forEach(ingredient => {
         states.list.addItem(ingredient);
-        // listView.renderItem(item);
     });
     listView.refreshList(states.list.items);
 }
 
+/**
+ * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
+ */
 const controlLike = function() {
     if (!states.likes) {
         states.likes = new Likes();
@@ -207,7 +220,9 @@ const controlLike = function() {
 
 }
 
-// Handle delete and update shopping list item events
+/**
+ * Handle delete and update shopping list item events
+ */
 elements.shopping.addEventListener('click', event => {
     const id = event.target.closest('.shopping__item').dataset.itemid;
 
@@ -223,6 +238,9 @@ elements.shopping.addEventListener('click', event => {
     }
 });
 
+/**
+ * Prompts the print from browser to only print the current shopping list
+ */
 document.querySelector('.print-btn').addEventListener('click', event => {
     PHE.printElement(document.querySelector('.shopping'));
 })
