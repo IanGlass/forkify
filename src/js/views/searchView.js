@@ -24,6 +24,28 @@ export const limitRecipeTitle = (title, limit = 25) => {
     return title;
 }
 
+export const getLabels = () => {
+
+    let diet;
+    for (let index = 0; index < elements.dietPanel.children.length; index++) {
+        if (JSON.parse(elements.dietPanel.children[index].dataset.active)) {
+            diet = elements.dietPanel.children[index].id;
+        }
+    }
+
+    let health;
+    for (let index = 0; index < elements.healthPanel.children.length; index++) {
+        if (JSON.parse(elements.healthPanel.children[index].dataset.active)) {
+            health = elements.healthPanel.children[index].id;
+        }
+    }
+
+    return {
+        diet,
+        health
+    }
+}
+
 // Render a single recipe, which will be called in a loop to render all recipes
 const renderRecipe = recipe => {
     const markup = `

@@ -30,23 +30,10 @@ const controlSearch = async () => {
         // Render loader to show search is happening
         renderLoader(elements.searchResults);
 
-        // Get the diet filter
-        let diet;
-        for (let index = 0; index < elements.dietPanel.children.length; index++) {
-            if (JSON.parse(elements.dietPanel.children[index].dataset.active)) {
-                diet = elements.dietPanel.children[index].id;
-            }
-        }
-
-        // Get the health filter
-        let health;
-        for (let index = 0; index < elements.healthPanel.children.length; index++) {
-            if (JSON.parse(elements.healthPanel.children[index].dataset.active)) {
-                health = elements.healthPanel.children[index].id;
-            }
-        }
+        // Get the diet and health filter
+        let labels = searchView.getLabels();
         
-        states.search = new Search(query, diet, health);
+        states.search = new Search(query, labels.diet, labels.health);
 
         await states.search.getResults();
 
