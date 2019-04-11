@@ -50,7 +50,7 @@ export default class Search {
 
     /**
      * Formats the ingredients list for each recipe into a form compatible with this program. Failed conversions return an empty ingredient list which is later used to completely remove the recipe from the recipes list.
-     * @param {array} ingredients Array containing the ingredients list for a particular recipe.
+     * @param {Array} ingredients Array containing the ingredients list for a particular recipe.
      */
     standardizeIngredients(ingredients) {
         const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'ozs', 'teaspoon', 'teaspoons', 'cups', 'pounds', 'pound', 'grams', 'gram', 'tsps'];
@@ -156,8 +156,8 @@ export default class Search {
 
     /**
      * Updates the number of servings and the count of each ingredient for a recipe.
-     * @param {string} id ID of the recipe to update
-     * @param {string} type One of 'dec' or 'inc' indicating if the number of servings should increment or decrement by one.
+     * @param {String} id ID of the recipe to update
+     * @param {String} type One of 'dec' or 'inc' indicating if the number of servings should increment or decrement by one.
      */
     updateServings (id, type) {
         const index = this.recipes.findIndex(recipe => recipe.id === id);

@@ -3,7 +3,7 @@ import {limitRecipeTitle} from './searchView'
 
 /**
  * Toggles the like button of the currently displayed recipe if the recipe has been liked.
- * @param {boolean} isLiked True/False if recipe has been liked.
+ * @param {Boolean} isLiked True/False if recipe has been liked.
  */
 export const toggleLikeButton = isLiked => {
     const iconString = isLiked ? 'icon-heart' : 'icon-heart-outlined';
@@ -20,7 +20,7 @@ export const toggleLikeMenu = numberLikes => {
 
 /**
  * Render a like in the likes panel. May be called multiple times depending on the number of likes in the likes model.
- * @param {object} like Like object containing the id, title, image url, and any recipe labels.
+ * @param {Object} like Like object containing the id, title, image url, and any recipe labels.
  */
 export const renderLike = like => {
     const markUp = `
@@ -43,7 +43,7 @@ export const renderLike = like => {
 
 /**
  * Removes a like from the likes panel if the recipe is unliked.
- * @param {string} id ID of the like to remove from the likes panel.
+ * @param {String} id ID of the like to remove from the likes panel.
  */
 export const deleteLike = id => {
     const element = document.querySelector(`.likes__link[href="#${id}"]`).parentElement;

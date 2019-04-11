@@ -9,8 +9,8 @@ export const clearRecipes = () => {
 };
 
 /** Formats the count of an ingredient into a human readable fraction. Gets called for every recipe in createIngredient().
- * @param {integer} count The value to be formated into a human readable fraction.
- * @return {string} The human readable fraction.
+ * @param {Integer} count The value to be formated into a human readable fraction.
+ * @return {String} The human readable fraction.
  */
 const formatCount = count => {
     if (count) {
@@ -32,7 +32,7 @@ const formatCount = count => {
 
  /**
   * Returns the markUp for a single ingredient for a recipe. Called from renderRecipe().
-  * @param {object} ingredient The ingredient object to be rendered.
+  * @param {Object} ingredient The ingredient object to be rendered.
   */
 const createIngredient = ingredient => `
     <li class="recipe__item">
@@ -49,8 +49,8 @@ const createIngredient = ingredient => `
 
 /**
  * Renders a single recipe into the recipe view.
- * @param {object} recipe The recipe object to render.
- * @param {boolean} isLiked Determines if the like button should be active or not. If the like already exists in the likes array.
+ * @param {Object} recipe The recipe object to render.
+ * @param {Boolean} isLiked Determines if the like button should be active or not. If the like already exists in the likes array.
  */
 export const renderRecipe = (recipe, isLiked) => {
     const markUp = `
@@ -131,7 +131,7 @@ export const renderRecipe = (recipe, isLiked) => {
 
 /**
  * Updates the number of servings in the currently displayed recipe.
- * @param {object} recipe Recipe object containing the number of servings and ingredients array.
+ * @param {Object} recipe Recipe object containing the number of servings and ingredients array.
  */
 export const updateServings = recipe => {
     // Update servings

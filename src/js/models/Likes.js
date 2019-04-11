@@ -8,12 +8,12 @@ export default class Likes {
 
     /**
      * Adds a new like object to the this.likes array when the like button is pressed on a particular recipe
-     * @param {string} id The id of the particular like to add
-     * @param {string} title The recipe title
-     * @param {string} image URL to the recipe image
-     * @param {array} dietLabels Array of labels to describe dietary information of the recipe
-     * @param {array} healthLabels Array of labels to describe health information of the recipe
-     * @param {array} cautions Array of labels to describe cation information of the recipe
+     * @param {String} id The id of the particular like to add
+     * @param {String} title The recipe title
+     * @param {String} image URL to the recipe image
+     * @param {Array} dietLabels Array of labels to describe dietary information of the recipe
+     * @param {Array} healthLabels Array of labels to describe health information of the recipe
+     * @param {Array} cautions Array of labels to describe cation information of the recipe
      */
     addLike(id, title, image, dietLabels, healthLabels, cautions) {
         const like = {
@@ -33,7 +33,7 @@ export default class Likes {
 
     /**
      * Removes a like from the this.likes array if the like already exists
-     * @param {string} id The id of the particular like to remove
+     * @param {String} id The id of the particular like to remove
      */
     deleteLike(id) {
         this.likes.splice(this.likes.findIndex(element => element.id === id), 1);

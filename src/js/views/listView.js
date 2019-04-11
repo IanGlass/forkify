@@ -2,7 +2,7 @@ import {elements} from './base'
 
 /**
  * Refreshes the entire shopping list whenever an update is made to the list model.
- * @param {array} items Array of all the shopping list items.
+ * @param {Array} items Array of all the shopping list items.
  */
 export const refreshList = items => {
     // First clear the current items in the view.
@@ -29,7 +29,7 @@ export const refreshList = items => {
 
 /**
  * Removes a single shopping list item from the shopping list.
- * @param {string} id  ID of the shopping list ingredient to remove from the view.
+ * @param {String} id  ID of the shopping list ingredient to remove from the view.
  */
 export const deleteItem = id => {
     const item = document.querySelector(`[data-itemid="${id}"]`);

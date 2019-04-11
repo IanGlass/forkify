@@ -24,6 +24,9 @@ export const limitRecipeTitle = (title, limit = 25) => {
     return title;
 }
 
+/**
+ * Returns the diet and health label 
+ */
 export const getLabels = () => {
 
     let diet;
@@ -46,7 +49,10 @@ export const getLabels = () => {
     }
 }
 
-// Render a single recipe, which will be called in a loop to render all recipes
+/**
+ * Render a single recipe, which will be called in a loop to render all recipes
+ * @param {Object} recipe Single recipe object to add to the recipes panel
+ */
 const renderRecipe = recipe => {
     const markup = `
     <li>
@@ -78,7 +84,12 @@ const createButton = (page, type) => `
                 </button>
 `;
 
-// Renders the buttons to change pages on the recipes list
+/**
+ * Renders the buttons to change pages on the recipes list
+ * @param {Number} page The current page number being viewed.
+ * @param {Number} numberOfResults The total number of recipes.
+ * @param {Number} resultsPerPage The pagination number.
+ */
 const renderButtons = (page, numberOfResults, resultsPerPage) => {
     // Round the total number of pages up to ensure there are enough to show all results
     const numberOfPages = Math.ceil(numberOfResults/resultsPerPage);
@@ -99,6 +110,12 @@ const renderButtons = (page, numberOfResults, resultsPerPage) => {
     elements.searchResultsPages.insertAdjacentHTML('afterbegin', button);
 }
 
+/**
+ * Renders the entire recipes panel.
+ * @param {Array} recipes Array containing the entire list of recipes fetched from Edamam.
+ * @param {Number} page The current page number being viewed.
+ * @param {Number} resultsPerPage Pagination number.
+ */
 export const renderResults = (recipes, page = 1, resultsPerPage = 10) => {
     // Make sure recipes list is cleared before populating
     clearResults();
@@ -113,6 +130,9 @@ export const renderResults = (recipes, page = 1, resultsPerPage = 10) => {
     renderButtons(page, recipes.length, resultsPerPage);
 }
 
+/**
+ * Clears the search field, recipes panel and recipes navigation buttons
+ */
 export const clearResults = () => {
     // Clear the input field
     elements.searchInput.value = '';
@@ -124,6 +144,10 @@ export const clearResults = () => {
     elements.searchResultsPages.innerHTML = '';
 };
 
+/**
+ * Highlights the currently selected recipe in the recipes panel.
+ * @param {String} id The id of the recipe to highlight. 
+ */
 export const highlightSelected = id => {
     // Remove any highlighted items first
     const resultsArray = Array.from(document.querySelectorAll('.results__link'));
