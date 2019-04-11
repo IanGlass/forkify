@@ -23,7 +23,7 @@ https://all-the-food.herokuapp.com/
 ### Search
 
 #### Search Controller
-
+The search controller is essentially the entry point for app functionality. An event listener is attached to the search button and return key to call the `controlSearch` function. This renders a rotating loader while `controlSearch` fetches the search query, health and diet parameters and makes an AJAX call to fetch the recipes. When this promise returns, the loader is removed and the recipes panel is populated using the `searchView`.
 ```javascript
 /** 
  * Controls the search recipe function and displays the list of recipes found.
@@ -39,23 +39,10 @@ const controlSearch = async () => {
         // Render loader to show search is happening
         renderLoader(elements.searchResults);
 
-        // Get the diet filter
-        let diet;
-        for (let index = 0; index < elements.dietPanel.children.length; index++) {
-            if (JSON.parse(elements.dietPanel.children[index].dataset.active)) {
-                diet = elements.dietPanel.children[index].id;
-            }
-        }
-
-        // Get the health filter
-        let health;
-        for (let index = 0; index < elements.healthPanel.children.length; index++) {
-            if (JSON.parse(elements.healthPanel.children[index].dataset.active)) {
-                health = elements.healthPanel.children[index].id;
-            }
-        }
+        // Get the diet and health filter
+        let labels = searchView.getLabels();
         
-        states.search = new Search(query, diet, health);
+        states.search = new Search(query, labels.diet, labels.health);
 
         await states.search.getResults();
 
