@@ -7,8 +7,8 @@ export const getInput = () => elements.searchInput.value;
 
 /**
  * Reduces the size of a recipe title so it fits in the 
- * @param {*} title 
- * @param {*} limit 
+ * @param {String} title Title of the current recipe.
+ * @param {Number} limit Maximum title length to show.
  */
 export const limitRecipeTitle = (title, limit = 25) => {
     const newTitle = [];
