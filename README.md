@@ -20,7 +20,7 @@ The recipe view also includes a link to the recipe origin for cooking instructio
 
 https://all-the-food.herokuapp.com/
 
-### Search
+### Search and Recipes
 
 #### Search Controller
 The search controller is essentially the entry point for app functionality. An event listener is attached to the search button and return key, to call the `controlSearch` function. This renders a rotating loader while `controlSearch` fetches the search query, health and diet parameters and makes an AJAX call to fetch the recipes. When this promise returns, the loader is removed and the recipes panel is populated using the `searchView`.
@@ -57,6 +57,47 @@ const controlSearch = async () => {
 elements.searchForum.addEventListener('submit', event => {
     event.preventDefault();
     controlSearch();
+});
+
+/**
+ * Deals with diet filter dropdown buttons
+ */
+elements.dietPanel.addEventListener('click', event => {
+    // Turn all buttons off first, forEach not working ???
+    for (let index = 0; index < event.target.parentElement.children.length; index++) {
+        event.target.parentElement.children[index].dataset.active = false;
+        event.target.parentElement.children[index].style.backgroundImage = "linear-gradient(to right bottom, white, black)";
+    }
+    // Activate the selected button
+    event.target.dataset.active = true;
+    event.target.style.backgroundImage = "linear-gradient(to right bottom, #FBDB89, #F48982)";
+
+    // Change diet-btn text to selected filter
+    document.querySelector('.diet-btn').textContent = event.target.textContent === 'None' ? 'Diet Filter' : event.target.textContent;
+});
+
+/**
+ * Deals with health filter dropdown buttons
+ */
+elements.healthPanel.addEventListener('click', event => {
+    // Turn all buttons off first, forEach not working ???
+    for (let index = 0; index < event.target.parentElement.children.length; index++) {
+        event.target.parentElement.children[index].dataset.active = false;
+        event.target.parentElement.children[index].style.backgroundImage = "linear-gradient(to right bottom, white, black)";
+    }
+    // Activate the selected button
+    event.target.dataset.active = true;
+    event.target.style.backgroundImage = "linear-gradient(to right bottom, #FBDB89, #F48982)";
+
+    // Change health-btn text to selected filter
+    document.querySelector('.health-btn').textContent = event.target.textContent === 'None' ? 'Health Filter' : event.target.textContent;
+});
+
+/**
+ * Prompts the print from browser to only print the current shopping list
+ */
+document.querySelector('.print-btn').addEventListener('click', event => {
+    PHE.printElement(document.querySelector('.shopping'));
 });
 ```
 
@@ -236,7 +277,7 @@ export default class Search {
 ```
 
 #### Search View
-The `searchView` containes all the methods for reading an manipulating the search and recipes panel. 
+The `searchView` containes all the methods for reading an manipulating the search and recipes panel. `getInput` and `getLabels` are called from `controlRecipe` to get the search query and search parameters. Once the `Search` model has digested the recipe list, `renderResults` gets called by `controlRecipe` which renders each recipe individually, limits their display title length, and renders the recipe navigation buttons. 
 
 ```javascript
 /**
@@ -398,4 +439,211 @@ export const highlightSelected = id => {
     document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
 ```
+
+
+### Recipe
+The recipes panel shares information in the search model, which has the list of digested recipes stored. 
+
+#### Recipe Controller
+`controlRecipe` gets called on a URL hash change, which contains the id of the recipe to view when a recipe from the recipes panel is clicked. At this point the recipe view gets cleared and the recipe gets rendered.
+```javascript
+/**
+ * Loads the recipe selected from the recipes panel into the main recipe view
+ */
+const controlRecipe = () => {
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+
+    if (id) {
+        // Clear the recipe panel
+        recipeView.clearRecipes();
+
+        // Highlight the selected search item if there is one
+        if (states.search) searchView.highlightSelected(id);
+
+        // Render the recipe
+        recipeView.renderRecipe(states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)], states.likes.isLiked(id));
+    }
+};
+
+// Load a recipe when a recipe is chosen
+['hashchange'].forEach(event => window.addEventListener(event, controlRecipe));
+
+/** 
+ * Adds an on-click event listener to switch pages when a button is pressed to paginate up to 10 recipes at a time.
+ */
+elements.searchResults.addEventListener('click', event => {
+    // Get the button class
+    const button = event.target.closest('.btn-inline');
+    if (button) {
+        searchView.renderResults(states.search.recipes, parseInt(button.dataset.goto, 10));
+    }
+});
+```
+
+#### Recipe View
+`renderRecipe` gets called by `controlRecipe`, displaying the recipe title, image, cooking time, servings, its like status, URL to the original recipe and then loops through the ingredients array, calling `createIngredient` for every ingredient. For each call of `createIngredient`, `formatCount` is called to turn the ingredient count into a human readable fraction. `updateServings` is attached to the buttons next to the number of servings, in increments/decrements the number of servings respectively.
+```javascript
+/**
+ * Removes all the recipes from the recipe search panel.
+ */
+export const clearRecipes = () => {
+    elements.recipe.innerHTML = '';
+};
+
+/** Formats the count of an ingredient into a human readable fraction. Gets called for every recipe in createIngredient().
+ * @param {Integer} count The value to be formated into a human readable fraction.
+ * @return {String} The human readable fraction.
+ */
+const formatCount = count => {
+    if (count) {
+        // Disseminate count into an integer and decimal number for fractional formatting 
+        const [int, dec] = count.toString().split('.').map(element => parseInt(element, 10));
+
+        if (!dec) {
+            return count;
+        } else if (int === 0) {
+            const fraction = new Fraction(count);
+            return `${fraction.numerator}/${fraction.denominator}`;
+        } else {
+            const fraction = new Fraction(count - int);
+            return `${int} ${fraction.numerator}/${fraction.denominator}`;
+        }
+    }
+    return '?';
+};
+
+ /**
+  * Returns the markUp for a single ingredient for a recipe. Called from renderRecipe().
+  * @param {Object} ingredient The ingredient object to be rendered.
+  */
+const createIngredient = ingredient => `
+    <li class="recipe__item">
+        <svg class="recipe__icon">
+            <use href="img/icons.svg#icon-check"></use>
+        </svg>
+        <div class="recipe__count">${formatCount(ingredient.count)}</div>
+        <div class="recipe__ingredient">
+            <span class="recipe__unit">${ingredient.unit}</span>
+            ${ingredient.ingredient}
+        </div>
+    </li>
+`;
+
+/**
+ * Renders a single recipe into the recipe view.
+ * @param {Object} recipe The recipe object to render.
+ * @param {Boolean} isLiked Determines if the like button should be active or not. If the like already exists in the likes array.
+ */
+export const renderRecipe = (recipe, isLiked) => {
+    const markUp = `
+    <figure class="recipe__fig">
+        <img src="${recipe.image}" alt="${recipe.label}" class="recipe__img">
+        <h1 class="recipe__title">
+            <span>${recipe.label}</span>
+        </h1>
+    </figure>
+
+    <div class="recipe__details">
+        <div class="recipe__info">
+            <svg class="recipe__info-icon">
+                <use href="img/icons.svg#icon-stopwatch"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--minutes">${recipe.totalTime}</span>
+            <span class="recipe__info-text"> minutes</span>
+        </div>
+        <div class="recipe__info">
+            <svg class="recipe__info-icon">
+                <use href="img/icons.svg#icon-man"></use>
+            </svg>
+            <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+            <span class="recipe__info-text"> servings</span>
+
+            <div class="recipe__info-buttons">
+                <button class="btn-tiny btn-decrease">
+                    <svg>
+                        <use href="img/icons.svg#icon-circle-with-minus"></use>
+                    </svg>
+                </button>
+                <button class="btn-tiny btn-increase">
+                    <svg>
+                        <use href="img/icons.svg#icon-circle-with-plus"></use>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+        <button class="recipe__love">
+            <svg class="header__likes">
+                <use href="img/icons.svg#icon-heart${isLiked ? '' : '-outlined'}"></use>
+            </svg>
+        </button>
+    </div>
+
+
+
+    <div class="recipe__ingredients">
+        <ul class="recipe__ingredient-list">
+            ${recipe.ingredients.map(element => createIngredient(element)).join('')}
+        </ul>
+
+        <button class="btn-small recipe__btn--add">
+            <svg class="search__icon">
+                <use href="img/icons.svg#icon-shopping-cart"></use>
+            </svg>
+            <span>Add to shopping list</span>
+        </button>
+    </div>
+
+    <div class="recipe__directions">
+        <h2 class="heading-2">How to cook it</h2>
+        <p class="recipe__directions-text">
+            This recipe was carefully designed and tested. Please check out directions at their website.
+        </p>
+        <a class="btn-small recipe__btn" href="${recipe.url}" target="_blank">
+            <span>Directions</span>
+            <svg class="search__icon">
+                <use href="img/icons.svg#icon-triangle-right"></use>
+            </svg>
+
+        </a>
+    </div>
+    `;
+    elements.recipe.insertAdjacentHTML('afterbegin', markUp);
+}
+
+/**
+ * Updates the number of servings in the currently displayed recipe.
+ * @param {Object} recipe Recipe object containing the number of servings and ingredients array.
+ */
+export const updateServings = recipe => {
+    // Update servings
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+
+    const countElements = Array.from(document.querySelectorAll('.recipe__count'));
+    countElements.forEach((element, index) => {
+        element.textContent = formatCount(recipe.ingredients[index].count);
+    })
+}
+```
+
+
+### List
+
+
+
+
+
+
+
+
+
+### Likes
+
+
+
+
+
+
+
 

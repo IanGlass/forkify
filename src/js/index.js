@@ -84,29 +84,17 @@ elements.healthPanel.addEventListener('click', event => {
     document.querySelector('.health-btn').textContent = event.target.textContent === 'None' ? 'Health Filter' : event.target.textContent;
 });
 
-/** 
- * Adds an on-click event listener to switch pages when a button is pressed to paginate up to 10 recipes at a time.
- */
-elements.searchResults.addEventListener('click', event => {
-    // Get the button class
-    const button = event.target.closest('.btn-inline');
-    if (button) {
-        searchView.renderResults(states.search.recipes, parseInt(button.dataset.goto, 10));
-    }
-});
-
 /**
- * Restore status of likes on page load
+ * Prompts the print from browser to only print the current shopping list
  */
-window.addEventListener('load', () => {
-    states.likes = new Likes();
-
-    // Toggle the likes menu if any likes are present
-    likesView.toggleLikeMenu(states.likes.getNumberLikes());
-
-    // Render the current likes status
-    states.likes.likes.forEach(like => likesView.renderLike(like));
+document.querySelector('.print-btn').addEventListener('click', event => {
+    PHE.printElement(document.querySelector('.shopping'));
 });
+
+
+
+
+
 
 /**
  * Loads the recipe selected from the recipes panel into the main recipe view
@@ -130,6 +118,22 @@ const controlRecipe = () => {
 // Load a recipe when a recipe is chosen
 ['hashchange'].forEach(event => window.addEventListener(event, controlRecipe));
 
+/** 
+ * Adds an on-click event listener to switch pages when a button is pressed to paginate up to 10 recipes at a time.
+ */
+elements.searchResults.addEventListener('click', event => {
+    // Get the button class
+    const button = event.target.closest('.btn-inline');
+    if (button) {
+        searchView.renderResults(states.search.recipes, parseInt(button.dataset.goto, 10));
+    }
+});
+
+
+
+
+
+
 /**
  * Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button
  */
@@ -149,7 +153,7 @@ elements.recipe.addEventListener('click', event => {
     } else if (event.target.matches('.recipe__love, .recipe__love *')) {
         controlLike();
     }
-})
+});
 
 /**
  * Adds the currently selected recipe igredient list to the global states.list object and displays it in the shopping list
@@ -169,6 +173,30 @@ const controlShoppingList = function() {
     });
     listView.refreshList(states.list.items);
 }
+
+/**
+ * Handle delete and update shopping list item events
+ */
+elements.shopping.addEventListener('click', event => {
+    const id = event.target.closest('.shopping__item').dataset.itemid;
+
+    // Only delete if delete button was pressed
+    if (event.target.matches('.shopping__delete, .shopping__delete *')) {
+        states.list.deleteItem(id);
+
+        listView.deleteItem(id);
+    } else if (event.target.matches('.shopping__count-value')) {
+        // Handle the count update in the shopping list
+        const value = parseFloat(event.target.value, 10);
+        states.list.updateCount(id, value);
+    }
+});
+
+
+
+
+
+
 
 /**
  * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
@@ -207,26 +235,16 @@ const controlLike = function() {
 }
 
 /**
- * Handle delete and update shopping list item events
+ * Restore status of likes on page load
  */
-elements.shopping.addEventListener('click', event => {
-    const id = event.target.closest('.shopping__item').dataset.itemid;
+window.addEventListener('load', () => {
+    states.likes = new Likes();
 
-    // Only delete if delete button was pressed
-    if (event.target.matches('.shopping__delete, .shopping__delete *')) {
-        states.list.deleteItem(id);
+    // Toggle the likes menu if any likes are present
+    likesView.toggleLikeMenu(states.likes.getNumberLikes());
 
-        listView.deleteItem(id);
-    } else if (event.target.matches('.shopping__count-value')) {
-        // Handle the count update in the shopping list
-        const value = parseFloat(event.target.value, 10);
-        states.list.updateCount(id, value);
-    }
+    // Render the current likes status
+    states.likes.likes.forEach(like => likesView.renderLike(like));
 });
 
-/**
- * Prompts the print from browser to only print the current shopping list
- */
-document.querySelector('.print-btn').addEventListener('click', event => {
-    PHE.printElement(document.querySelector('.shopping'));
-})
+
