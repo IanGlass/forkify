@@ -149,23 +149,20 @@ elements.recipe.addEventListener('click', event => {
         states.search.updateServings(id, 'inc');
         recipeView.updateServings(currentRecipe);
     } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
-        controlShoppingList();
+        controlShoppingList(id);
     } else if (event.target.matches('.recipe__love, .recipe__love *')) {
-        controlLike();
+        controlLike(id);
     }
 });
 
 /**
  * Adds the currently selected recipe igredient list to the global states.list object and displays it in the shopping list
  */
-const controlShoppingList = function() {
+const controlShoppingList = function(id) {
     // Only create a new list if it doesn't exist or lose all previous information
     if (!states.list) {
         states.list = new List();
     }
-
-    // Grab the recipe id from the URL
-    const id = window.location.hash.replace('#', '');
 
     // Add all the items from the current recipe to the shopping list
     states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].ingredients.forEach(ingredient => {
@@ -201,13 +198,11 @@ elements.shopping.addEventListener('click', event => {
 /**
  * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
  */
-const controlLike = function() {
+const controlLike = function(id) {
     if (!states.likes) {
         states.likes = new Likes();
     }
 
-    // Grab the recipe id from the URL
-    const id = window.location.hash.replace('#', '');
     const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
 
     // Handle if recipe has been liked yet or not

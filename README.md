@@ -446,7 +446,7 @@ export const highlightSelected = id => {
 
 
 ## Recipe
-The recipes panel shares information in the search model, which has the list of digested recipes stored.
+The recipes panel shares information with the search controller in the search model, which has the list of digested recipes stored.
 
 <p align="center">
 <img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="500">
@@ -644,6 +644,8 @@ export const updateServings = recipe => {
 
 ### Shopping Controller
 
+The `controlShoppingList` controller only gets invoked when one of the 'Add to shopping list' button on one of the recipes gets clicked. The same event listener also controls increase and decrease of the number of servings using the `search` model and updates the `recipeView` by first reading the current recipe id from the URL. `controlShoppingList` calls the `list` model for each ingredient in the current recipe and then re-renders the entire shopping list. An event listener is also attached to the shopping list to remove a particular shopping list item through `list.deleteItem` or update the count of an item using `list.updateCount`.
+
 ```javascript
 /**
  * Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button
@@ -660,23 +662,20 @@ elements.recipe.addEventListener('click', event => {
         states.search.updateServings(id, 'inc');
         recipeView.updateServings(currentRecipe);
     } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
-        controlShoppingList();
+        controlShoppingList(id);
     } else if (event.target.matches('.recipe__love, .recipe__love *')) {
-        controlLike();
+        controlLike(id);
     }
 });
 
 /**
  * Adds the currently selected recipe igredient list to the global states.list object and displays it in the shopping list
  */
-const controlShoppingList = function() {
+const controlShoppingList = function(id) {
     // Only create a new list if it doesn't exist or lose all previous information
     if (!states.list) {
         states.list = new List();
     }
-
-    // Grab the recipe id from the URL
-    const id = window.location.hash.replace('#', '');
 
     // Add all the items from the current recipe to the shopping list
     states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].ingredients.forEach(ingredient => {
@@ -705,6 +704,8 @@ elements.shopping.addEventListener('click', event => {
 ```
 
 ### Shopping Model
+
+The `shoppingList` model contains an array of objects containing all the current shopping list items. It also contains methods to add, delete and update a specific ingredient item.
 
 ```javascript
 /**
@@ -756,6 +757,10 @@ export default class shoppingList {
 
 ### Shopping View
 
+The `listView` contains two methods: 
+* One for refreshing the entire shopping list by first removing all items and then iterating through the `list.items` array and rendering each item, and;
+* One for removing an specific shopping list item from the view. 
+
 ```javascript
 /**
  * Refreshes the entire shopping list whenever an update is made to the list model.
@@ -801,20 +806,17 @@ export const deleteItem = id => {
 
 ## Likes
 
-
 ### Likes Controller
 
 ```javascript
 /**
  * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
  */
-const controlLike = function() {
+const controlLike = function(id) {
     if (!states.likes) {
         states.likes = new Likes();
     }
 
-    // Grab the recipe id from the URL
-    const id = window.location.hash.replace('#', '');
     const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
 
     // Handle if recipe has been liked yet or not
