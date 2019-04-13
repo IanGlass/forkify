@@ -20,13 +20,13 @@ The recipe view also includes a link to the recipe origin for cooking instructio
 
 https://all-the-food.herokuapp.com/
 
-### Search and Recipes
+## Search and Recipes
 
 <p align="center">
 <img src="https://github.com/IanGlass/all-the-food/blob/master/recipes_panel.png" width="300">
 </p>
 
-#### Search Controller
+### Search Controller
 The search controller is essentially the entry point for app functionality. An event listener is attached to the search button and return key, to call the `controlSearch` function. This renders a rotating loader while `controlSearch` fetches the search query, health and diet parameters and makes an AJAX call to fetch the recipes. When this promise returns, the loader is removed and the recipes panel is populated using the `searchView`.
 ```javascript
 /** 
@@ -105,7 +105,7 @@ document.querySelector('.print-btn').addEventListener('click', event => {
 });
 ```
 
-#### Search Model
+### Search Model
 The `Search` model begins by fetching a list of recipes based on pre-defined search parameters and storing them in the `Search` object. For each recipe, the ingredients are standardized to ensure they fit in a format that is compatible with the rest of the app. Recipes who's ingredients could not be standardized are initialised with an empty ingredients list, which allows the recipe to be removed from the list in `tidyRecipes`. Recipes are given a unique ID and their number of servings is mapped out into recipe.servings.
 ```javascript
 /**
@@ -280,7 +280,7 @@ export default class Search {
 }
 ```
 
-#### Search View
+### Search View
 The `searchView` containes all the methods for reading an manipulating the search and recipes panel. `getInput` and `getLabels` are called from `controlRecipe` to get the search query and search parameters. Once the `Search` model has digested the recipe list, `renderResults` gets called by `controlRecipe` which renders each recipe individually, limits their display title length, and renders the recipe navigation buttons. 
 
 ```javascript
@@ -445,14 +445,14 @@ export const highlightSelected = id => {
 ```
 
 
-### Recipe
+## Recipe
 The recipes panel shares information in the search model, which has the list of digested recipes stored.
 
 <p align="center">
 <img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="500">
 </p>
 
-#### Recipe Controller
+### Recipe Controller
 `controlRecipe` gets called on a URL hash change, which contains the id of the recipe to view when a recipe from the recipes panel is clicked. At this point the recipe view gets cleared and the recipe gets rendered.
 ```javascript
 /**
@@ -489,7 +489,7 @@ elements.searchResults.addEventListener('click', event => {
 });
 ```
 
-#### Recipe View
+### Recipe View
 `renderRecipe` gets called by `controlRecipe`, displaying the recipe title, image, cooking time, servings, its like status, URL to the original recipe and then loops through the ingredients array, calling `createIngredient` for every ingredient. For each call of `createIngredient`, `formatCount` is called to turn the ingredient count into a human readable fraction. `updateServings` is attached to the buttons next to the number of servings, in increments/decrements the number of servings respectively.
 ```javascript
 /**
@@ -636,13 +636,13 @@ export const updateServings = recipe => {
 ```
 
 
-### Shopping List
+## Shopping List
 
 <p align="center">
 <img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="300">
 </p>
 
-#### Shopping Controller
+### Shopping Controller
 
 ```javascript
 /**
@@ -704,7 +704,7 @@ elements.shopping.addEventListener('click', event => {
 });
 ```
 
-#### Shopping Model
+### Shopping Model
 
 ```javascript
 /**
@@ -754,7 +754,7 @@ export default class shoppingList {
 }
 ```
 
-#### Shopping View
+### Shopping View
 
 ```javascript
 /**
@@ -799,10 +799,10 @@ export const deleteItem = id => {
 
 
 
-### Likes
+## Likes
 
 
-#### Likes Controller
+### Likes Controller
 
 ```javascript
 /**
@@ -855,7 +855,7 @@ window.addEventListener('load', () => {
 });
 ```
 
-#### Likes Model
+### Likes Model
 
 ```javascript
 /**
@@ -917,7 +917,7 @@ export default class Likes {
 }
 ```
 
-#### Likes View
+### Likes View
 
 ```javascript
 /**
