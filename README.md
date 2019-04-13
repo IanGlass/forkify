@@ -642,7 +642,13 @@ export const updateServings = recipe => {
 <img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="300">
 </p>
 
+#### Shopping Controller
 
+
+#### Shopping Model
+
+
+#### Shopping View
 
 
 
@@ -651,7 +657,13 @@ export const updateServings = recipe => {
 ### Likes
 
 
+#### Likes Controller
 
+
+#### Likes Model
+
+
+#### Likes View
 
 
 
