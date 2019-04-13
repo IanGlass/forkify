@@ -644,12 +644,157 @@ export const updateServings = recipe => {
 
 #### Shopping Controller
 
+```javascript
+/**
+ * Add event listener to increase/decrease # of servings buttons on recipe page OR handle favourite recipe button OR handle add to shopping list button
+ */
+elements.recipe.addEventListener('click', event => {
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+    const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
+    
+    if (event.target.matches('.btn-decrease, .btn-decrease *') && currentRecipe.servings > 1) {
+        states.search.updateServings(id, 'dec');
+        recipeView.updateServings(currentRecipe);
+    } else if (event.target.matches('.btn-increase, .btn-increase *')) {
+        states.search.updateServings(id, 'inc');
+        recipeView.updateServings(currentRecipe);
+    } else if (event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+        controlShoppingList();
+    } else if (event.target.matches('.recipe__love, .recipe__love *')) {
+        controlLike();
+    }
+});
+
+/**
+ * Adds the currently selected recipe igredient list to the global states.list object and displays it in the shopping list
+ */
+const controlShoppingList = function() {
+    // Only create a new list if it doesn't exist or lose all previous information
+    if (!states.list) {
+        states.list = new List();
+    }
+
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+
+    // Add all the items from the current recipe to the shopping list
+    states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)].ingredients.forEach(ingredient => {
+        states.list.addItem(ingredient);
+    });
+    listView.refreshList(states.list.items);
+}
+
+/**
+ * Handle delete and update shopping list item events
+ */
+elements.shopping.addEventListener('click', event => {
+    const id = event.target.closest('.shopping__item').dataset.itemid;
+
+    // Only delete if delete button was pressed
+    if (event.target.matches('.shopping__delete, .shopping__delete *')) {
+        states.list.deleteItem(id);
+
+        listView.deleteItem(id);
+    } else if (event.target.matches('.shopping__count-value')) {
+        // Handle the count update in the shopping list
+        const value = parseFloat(event.target.value, 10);
+        states.list.updateCount(id, value);
+    }
+});
+```
 
 #### Shopping Model
 
+```javascript
+/**
+ * Stores all the ingredients for all recipes which have been added and collates them
+ */
+export default class shoppingList {
+    constructor() {
+        this.items = [];
+    }
+
+    /**
+     * Adds a single ingredient to the this.items array representing the entire shopping list. This may be called multiple times for a single recipe added to the shopping list. A unique id is generated for each shopping list item
+     * @param {Object} ingredient The ingredient object to be added to the shopping list, consisting at minimum of count, unit and ingredient elements
+     */
+    addItem(ingredient) {
+        // First check if we have a similar item already in the list and collate if units are also the same. Only want to find first match
+        const index = this.items.findIndex(element => stringSimilarity.compareTwoStrings(element.ingredient, ingredient.ingredient) > 0.9);
+        if (index > - 1 && (ingredient.unit === this.items[index].unit)) {
+            this.items[index].count = (parseFloat(this.items[index].count) + parseFloat(ingredient.count));
+        } else {
+            const item = {
+                id: uniqid(),
+                count: ingredient.count,
+                unit: ingredient.unit,
+                ingredient: ingredient.ingredient
+            };
+            this.items.push(item);
+        }
+    }
+
+    /**
+     * Removes an item from the shopping list model
+     * @param {String} id Id of the item to be removed
+     */
+    deleteItem(id) {
+        this.items.splice(this.items.findIndex(element => element.id === id), 1);
+    }
+
+    /**
+     * Updates the count of an ingredient
+     * @param {String} id The id of the shopping list item to be updated
+     * @param {String} newCount The new count of the shopping list item
+     */
+    updateCount(id, newCount) {
+        this.items.find(element => element.id === id).count = newCount;
+    }
+}
+```
 
 #### Shopping View
 
+```javascript
+/**
+ * Refreshes the entire shopping list whenever an update is made to the list model.
+ * @param {Array} items Array of all the shopping list items.
+ */
+export const refreshList = items => {
+    // First clear the current items in the view.
+    elements.shopping.innerHTML = '';
+    // Add all the items in the shopping list.
+    items.forEach(item => {
+        const markUp = `
+        <li class="shopping__item" data-itemid=${item.id}>
+            <div class="shopping__count">
+                <input type="number" value="${item.count}" step="${item.count}" class="shopping__count-value">
+                <p>${item.unit}</p>
+            </div>
+            <p class="shopping__description">${item.ingredient}</p>
+            <button class="shopping__delete btn-tiny">
+                <svg>
+                    <use href="img/icons.svg#icon-circle-with-cross"></use>
+                </svg>
+            </button>
+        </li>
+    `;
+    elements.shopping.insertAdjacentHTML('beforeend', markUp);
+    });   
+}
+
+/**
+ * Removes a single shopping list item from the shopping list.
+ * @param {String} id  ID of the shopping list ingredient to remove from the view.
+ */
+export const deleteItem = id => {
+    const item = document.querySelector(`[data-itemid="${id}"]`);
+    if (item) {
+        item.parentElement.removeChild(item);
+    }
+}
+```
 
 
 
@@ -659,13 +804,171 @@ export const updateServings = recipe => {
 
 #### Likes Controller
 
+```javascript
+/**
+ * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
+ */
+const controlLike = function() {
+    if (!states.likes) {
+        states.likes = new Likes();
+    }
+
+    // Grab the recipe id from the URL
+    const id = window.location.hash.replace('#', '');
+    const currentRecipe = states.search.recipes[states.search.recipes.findIndex(recipe => recipe.id === id)];
+
+    // Handle if recipe has been liked yet or not
+    if (!states.likes.isLiked(id)) {
+        const newLike = states.likes.addLike(
+            id,
+            currentRecipe.label, 
+            currentRecipe.image,
+            currentRecipe.dietLabels,
+            currentRecipe.healthLabels,
+            currentRecipe.cautions
+        );
+        likesView.toggleLikeButton(true);
+
+        likesView.renderLike(newLike);
+    } else {
+        states.likes.deleteLike(id);
+        likesView.toggleLikeButton(false);
+        likesView.deleteLike(id);
+    }
+
+    // Toggle if the likes menu should be shown yet
+    likesView.toggleLikeMenu(states.likes.getNumberLikes());
+
+}
+
+/**
+ * Restore status of likes on page load
+ */
+window.addEventListener('load', () => {
+    states.likes = new Likes();
+
+    // Toggle the likes menu if any likes are present
+    likesView.toggleLikeMenu(states.likes.getNumberLikes());
+
+    // Render the current likes status
+    states.likes.likes.forEach(like => likesView.renderLike(like));
+});
+```
 
 #### Likes Model
 
+```javascript
+/**
+ * Stores the global liked recipes list which are displayed in the likes panel
+ */
+export default class Likes {
+    constructor() {
+        this.likes = [];
+    }
+
+    /**
+     * Adds a new like object to the this.likes array when the like button is pressed on a particular recipe
+     * @param {String} id The id of the particular like to add
+     * @param {String} title The recipe title
+     * @param {String} image URL to the recipe image
+     * @param {Array} dietLabels Array of labels to describe dietary information of the recipe
+     * @param {Array} healthLabels Array of labels to describe health information of the recipe
+     * @param {Array} cautions Array of labels to describe cation information of the recipe
+     */
+    addLike(id, title, image, dietLabels, healthLabels, cautions) {
+        const like = {
+            id,
+            title,
+            image,
+            dietLabels,
+            healthLabels,
+            cautions
+        };
+        this.likes.push(like);
+
+        // this.persistData();
+
+        return like;
+    }
+
+    /**
+     * Removes a like from the this.likes array if the like already exists
+     * @param {String} id The id of the particular like to remove
+     */
+    deleteLike(id) {
+        this.likes.splice(this.likes.findIndex(element => element.id === id), 1);
+        this.persistData();
+    }
+
+    /**
+     * Tests if the like exists in the this.likes array to update the like button when a recipe is rendered
+     * @param {*} id The id of the particular like
+     */
+    isLiked(id) {
+        return this.likes.findIndex(element => element.id === id) !== -1;
+    }
+
+    /**
+     * Returns the current number of likes in the this.likes array
+     */
+    getNumberLikes() {
+        return this.likes.length;
+    }
+}
+```
 
 #### Likes View
 
+```javascript
+/**
+ * Toggles the like button of the currently displayed recipe if the recipe has been liked.
+ * @param {Boolean} isLiked True/False if recipe has been liked.
+ */
+export const toggleLikeButton = isLiked => {
+    const iconString = isLiked ? 'icon-heart' : 'icon-heart-outlined';
+    document.querySelector('.recipe__love use').setAttribute('href', `img/icons.svg#${iconString}`);
+};
 
+/**
+ * Displays/hides the menu if there are any likes or not.
+ * @param {number} numberLikes Number of likes in the likes model.
+ */
+export const toggleLikeMenu = numberLikes => {
+    elements.likesMenu.style.visibility = numberLikes > 0 ? 'visible' : 'hidden';
+};
+
+/**
+ * Render a like in the likes panel. May be called multiple times depending on the number of likes in the likes model.
+ * @param {Object} like Like object containing the id, title, image url, and any recipe labels.
+ */
+export const renderLike = like => {
+    const markUp = `
+    <li>
+        <a class="likes__link" href="#${like.id}">
+            <figure class="likes__fig">
+                <img src="${like.image}" alt="${like.title}">
+            </figure>
+            <div class="likes__data">
+                <h4 class="likes__name">${limitRecipeTitle(like.title)}</h4>
+                <p class="results__labels"><b>diet</b>:${like.dietLabels.toString()}</p>
+                <p class="results__labels"><b>health</b>:${like.healthLabels.toString()}</p>
+                <p class="results__labels"><b>caution</b>:${like.cautions.toString()}</p>
+            </div>
+        </a>
+    </li>
+    `;
+    elements.likesList.insertAdjacentHTML('beforeend', markUp);
+};
+
+/**
+ * Removes a like from the likes panel if the recipe is unliked.
+ * @param {String} id ID of the like to remove from the likes panel.
+ */
+export const deleteLike = id => {
+    const element = document.querySelector(`.likes__link[href="#${id}"]`).parentElement;
+    if (element) element.parentElement.removeChild(element);
+}
+```
 
 
 
