@@ -808,6 +808,8 @@ export const deleteItem = id => {
 
 ### Likes Controller
 
+Like the shopping list controller (`controlShoppingList`), `controlLike` is attached to an on click event listener on the recipe display. When the like button is pressed on a particular recipe, the current recipe is fetched from the `search.recipes` array and a new like object is added to the `likes.likes` array IF the current recipe is not already liked. This is tested using the `isLiked` method in the `likes` model. If the recipe is already liked, then it is removed from the `likes.likes` array and the likes panel is updated accordingly.
+
 ```javascript
 /**
  * Adds the currently selected recipe to the global states.likes object and renders the like panel if there is atleast one like
@@ -858,7 +860,11 @@ window.addEventListener('load', () => {
 ```
 
 ### Likes Model
-
+The `likes` model has four methods:
+* `addLike` - Adds a new like to the `likes` array;
+* `deleteLike` - Removes the selected like from the `likes` array;
+* `isLiked` - Returns a boolean if the current recipe is already liked, to decide if the current recipe should be added or removed from the `likes` array;
+* `getNumberOfLikes` - Returns the length of the `likes` array, to determine if the likes panel should be displayed.
 ```javascript
 /**
  * Stores the global liked recipes list which are displayed in the likes panel
@@ -888,8 +894,6 @@ export default class Likes {
         };
         this.likes.push(like);
 
-        // this.persistData();
-
         return like;
     }
 
@@ -899,7 +903,6 @@ export default class Likes {
      */
     deleteLike(id) {
         this.likes.splice(this.likes.findIndex(element => element.id === id), 1);
-        this.persistData();
     }
 
     /**
@@ -920,6 +923,8 @@ export default class Likes {
 ```
 
 ### Likes View
+
+`toggleLikeButton` and `toggleLikeMenu` toggles whether the like button for the current recipe or the likes panel should be displayed respectively. Likewise, `renderLike` adds a single like to the likes panel and will be invoked once for every like in the `likes` array.
 
 ```javascript
 /**

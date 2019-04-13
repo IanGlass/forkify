@@ -26,8 +26,6 @@ export default class Likes {
         };
         this.likes.push(like);
 
-        // this.persistData();
-
         return like;
     }
 
@@ -37,7 +35,6 @@ export default class Likes {
      */
     deleteLike(id) {
         this.likes.splice(this.likes.findIndex(element => element.id === id), 1);
-        this.persistData();
     }
 
     /**
