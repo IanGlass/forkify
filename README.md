@@ -26,8 +26,10 @@ https://all-the-food.herokuapp.com/
 <img src="https://github.com/IanGlass/all-the-food/blob/master/recipes_panel.png" width="300">
 </p>
 
-### Search Controller
+<details>
+<summary>Search Controller</summary>
 The search controller is essentially the entry point for app functionality. An event listener is attached to the search button and return key, to call the `controlSearch` function. This renders a rotating loader while `controlSearch` fetches the search query, health and diet parameters and makes an AJAX call to fetch the recipes. When this promise returns, the loader is removed and the recipes panel is populated using the `searchView`.
+
 ```javascript
 /** 
  * Controls the search recipe function and displays the list of recipes found.
@@ -105,7 +107,11 @@ document.querySelector('.print-btn').addEventListener('click', event => {
 });
 ```
 
-### Search Model
+</details>
+
+<details>
+<summary>Search Model</summary>
+
 The `Search` model begins by fetching a list of recipes based on pre-defined search parameters and storing them in the `Search` object. For each recipe, the ingredients are standardized to ensure they fit in a format that is compatible with the rest of the app. Recipes who's ingredients could not be standardized are initialised with an empty ingredients list, which allows the recipe to be removed from the list in `tidyRecipes`. Recipes are given a unique ID and their number of servings is mapped out into recipe.servings.
 ```javascript
 /**
@@ -280,7 +286,10 @@ export default class Search {
 }
 ```
 
-### Search View
+</details>
+
+<details>
+<summary>Search View</summary>
 The `searchView` containes all the methods for reading an manipulating the search and recipes panel. `getInput` and `getLabels` are called from `controlRecipe` to get the search query and search parameters. Once the `Search` model has digested the recipe list, `renderResults` gets called by `controlRecipe` which renders each recipe individually, limits their display title length, and renders the recipe navigation buttons. 
 
 ```javascript
@@ -443,7 +452,7 @@ export const highlightSelected = id => {
     document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
 ```
-
+</details>
 
 ## Recipe
 The recipes panel shares information with the search controller in the search model, which has the list of digested recipes stored.
@@ -452,8 +461,10 @@ The recipes panel shares information with the search controller in the search mo
 <img src="https://github.com/IanGlass/all-the-food/blob/master/recipe.png" width="500">
 </p>
 
-### Recipe Controller
+<details>
+<summary>Recipe Controller</summary>
 `controlRecipe` gets called on a URL hash change, which contains the id of the recipe to view when a recipe from the recipes panel is clicked. At this point the recipe view gets cleared and the recipe gets rendered.
+
 ```javascript
 /**
  * Loads the recipe selected from the recipes panel into the main recipe view
@@ -489,8 +500,12 @@ elements.searchResults.addEventListener('click', event => {
 });
 ```
 
-### Recipe View
+</details>
+
+<details>
+<summary>Recipe View</summary>
 `renderRecipe` gets called by `controlRecipe`, displaying the recipe title, image, cooking time, servings, its like status, URL to the original recipe and then loops through the ingredients array, calling `createIngredient` for every ingredient. For each call of `createIngredient`, `formatCount` is called to turn the ingredient count into a human readable fraction. `updateServings` is attached to the buttons next to the number of servings, in increments/decrements the number of servings respectively.
+
 ```javascript
 /**
  * Removes all the recipes from the recipe search panel.
@@ -634,7 +649,7 @@ export const updateServings = recipe => {
     })
 }
 ```
-
+</details>
 
 ## Shopping List
 
@@ -642,7 +657,8 @@ export const updateServings = recipe => {
 <img src="https://github.com/IanGlass/all-the-food/blob/master/shopping.png" width="300">
 </p>
 
-### Shopping Controller
+<details>
+<summary>Shopping Controller</summary>
 
 The `controlShoppingList` controller only gets invoked when one of the 'Add to shopping list' button on one of the recipes gets clicked. The same event listener also controls increase and decrease of the number of servings using the `search` model and updates the `recipeView` by first reading the current recipe id from the URL. `controlShoppingList` calls the `list` model for each ingredient in the current recipe and then re-renders the entire shopping list. An event listener is also attached to the shopping list to remove a particular shopping list item through `list.deleteItem` or update the count of an item using `list.updateCount`.
 
@@ -703,7 +719,10 @@ elements.shopping.addEventListener('click', event => {
 });
 ```
 
-### Shopping Model
+</details>
+
+<details>
+<summary>Shopping Model</summary>
 
 The `shoppingList` model contains an array of objects containing all the current shopping list items. It also contains methods to add, delete and update a specific ingredient item.
 
@@ -755,7 +774,10 @@ export default class shoppingList {
 }
 ```
 
-### Shopping View
+</details>
+
+<details>
+<summary>Shopping View</summary>
 
 The `listView` contains two methods: 
 * One for refreshing the entire shopping list by first removing all items and then iterating through the `list.items` array and rendering each item, and;
@@ -800,13 +822,12 @@ export const deleteItem = id => {
     }
 }
 ```
-
-
-
+</details>
 
 ## Likes
 
-### Likes Controller
+<details>
+<summary>Likes Controller</summary>
 
 Like the shopping list controller (`controlShoppingList`), `controlLike` is attached to an on click event listener on the recipe display. When the like button is pressed on a particular recipe, the current recipe is fetched from the `search.recipes` array and a new like object is added to the `likes.likes` array IF the current recipe is not already liked. This is tested using the `isLiked` method in the `likes` model. If the recipe is already liked, then it is removed from the `likes.likes` array and the likes panel is updated accordingly.
 
@@ -859,12 +880,16 @@ window.addEventListener('load', () => {
 });
 ```
 
-### Likes Model
+</details>
+
+<details>
+<summary>Likes Model</summary>
 The `likes` model has four methods:
 * `addLike` - Adds a new like to the `likes` array;
 * `deleteLike` - Removes the selected like from the `likes` array;
 * `isLiked` - Returns a boolean if the current recipe is already liked, to decide if the current recipe should be added or removed from the `likes` array;
 * `getNumberOfLikes` - Returns the length of the `likes` array, to determine if the likes panel should be displayed.
+
 ```javascript
 /**
  * Stores the global liked recipes list which are displayed in the likes panel
@@ -922,7 +947,10 @@ export default class Likes {
 }
 ```
 
-### Likes View
+</details>
+
+<details>
+<summary>Likes View</summary>
 
 `toggleLikeButton` and `toggleLikeMenu` toggles whether the like button for the current recipe or the likes panel should be displayed respectively. Likewise, `renderLike` adds a single like to the likes panel and will be invoked once for every like in the `likes` array.
 
@@ -977,5 +1005,4 @@ export const deleteLike = id => {
 }
 ```
 
-
-
+</details>
