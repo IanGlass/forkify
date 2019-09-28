@@ -18,7 +18,9 @@ Once a search is made, the recipes panel will be populated with a paginated list
 
 The recipe view also includes a link to the recipe origin for cooking instructions, allows the recipe to be added to a favourites list and allows the recipe ingredients to be added to a shopping list. The shopping list concatenates similar ingredients to make shopping easier and can be printed with the 'print shopping list' button.
 
+<p align="center">
 https://all-the-food.herokuapp.com/
+</p>
 
 ## Search and Recipes
 
